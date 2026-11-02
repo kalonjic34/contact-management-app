@@ -6,17 +6,29 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+function get_contacts(){
+    return[
+
+    1 => ['name' => 'Sam', 'phone' => '0765553344'],
+    2 => ['name' => 'James', 'phone' => '0619905463'],
+    3 => ['name' => 'Will', 'phone' => '0762439646'],
+    ];
+}
 
 Route::get('/contacts', function(){
-    return view('contacts.index');
+    $contacts = get_contacts();
+    return view('contacts.index', compact('contacts'));
 })->name('contacts.index');
 
 Route::get('/contacts/create',function(){
-    return"<h1>Add new contact</h1>";
+    return view('contacts.create');
 })->name('contacts.create');
 
 Route::get('/contacts/{id}',function($id){
-    return "contacts: ". $id;
+    $contacts = get_contacts();
+    $contact = $contacts[$id];
+
+    return view('contacts.show')->with('contact', $contact);
 })->name('contacts.show');
 
 
