@@ -1,5 +1,7 @@
 @extends('layouts.main')
 
+@section('title','Linkora | Add someone')
+
 @section('content')
     
 
@@ -77,5 +79,4 @@
         </div>
       </div>
     </main>
-
-@section('title','Linkora | Add someone')
+@endsection
