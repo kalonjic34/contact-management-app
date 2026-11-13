@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\CompanyRepository;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
-    function index(){
-         $companies = [
-    1 => ['name' => 'Company One', 'contacts' => 3],
-    2 => ['name' => 'Company Two', 'contacts' => 5],
 
-];
+    // protected $company;
+
+    function __construct(protected CompanyRepository $company)
+    {
+        $this->company= $company;
+    }
+
+    function index(CompanyRepository $company, Request $request){
+//          $companies = [
+//     1 => ['name' => 'Company One', 'contacts' => 3],
+//     2 => ['name' => 'Company Two', 'contacts' => 5],
+
+// ];
+    $companies = $company->pluck();
 
     $contacts = $this->get_contacts();
 
@@ -22,7 +32,7 @@ class ContactController extends Controller
         return view('contacts.create');
     }
 
-    function show($id){
+    function show(Request $request, $id){
         $contacts = $this->get_contacts();
     abort_if(!isset($contacts[$id]),404);
     $contact = $contacts[$id];
@@ -37,9 +47,4 @@ class ContactController extends Controller
     3 => ['id'=>3,'name' => 'Matt', 'phone' => '0770098890'],
     ];
 }
-
-    
-
-    
-
 }
