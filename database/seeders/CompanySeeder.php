@@ -30,7 +30,7 @@ class CompanySeeder extends Seeder
             $companies[] = $company;
         }
 
-        // DB::table('companies')->delete();
+        DB::table('companies')->delete();
         DB::table('companies')->insert($companies);
     }
 }
