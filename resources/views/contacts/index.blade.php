@@ -30,13 +30,18 @@
                       <th scope="col">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>                  
+                  <tbody>    
+                    @forelse ($contacts as $index => $contact )
+                      @include('contacts._contact',['contact'=>$contact, 'index'=>$index]) 
+                    @empty
+                      @include('contacts._empty')
+                    @endforelse           
 
-                    @each('contacts._contact', $contacts, 'contact','contacts._empty')
+                    {{-- @each('contacts._contact', $contacts, 'contact','contacts._empty') --}}
                   </tbody>
                 </table> 
 
-                {{ $contacts->links() }}
+                {{ $contacts->withQueryString()->links() }}
               </div>
             </div>
           </div>
