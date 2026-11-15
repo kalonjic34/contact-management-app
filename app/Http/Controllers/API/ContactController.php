@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Contact;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -28,7 +29,9 @@ class ContactController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return view('contacts.show', [
+            'contact' => Contact::findOrFail($id),
+        ]);
     }
 
     /**
