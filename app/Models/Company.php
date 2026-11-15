@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     use HasFactory;
-    // protected $table = "app_companies";
-    // protected $primaryKey = '__id';
+
+    protected $fillable = ['name', 'email','address','website'];
+
+    function contacts(){
+        return $this->hasMany(Contact::class);
+    }
 }
