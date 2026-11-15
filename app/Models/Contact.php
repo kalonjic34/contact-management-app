@@ -14,4 +14,8 @@ class Contact extends Model
     function company(){
         return $this -> belongsTo(Company::class);
     }
+
+    function task(){
+        return $this->hasMany(Task::class);
+    }
 }
