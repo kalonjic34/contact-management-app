@@ -9,4 +9,8 @@ class Task extends Model
 {
     /** @use HasFactory<\Database\Factories\TaskFactory> */
     use HasFactory;
+
+    function contact(){
+        return $this->belongsTo(Contact::class);
+    }
 }
