@@ -20,7 +20,7 @@ class ContactController extends Controller
 
     $companies = $company->pluck();
 
-    $contacts = Contact::orderBy('company_id')->orderBy('id')->get();
+    $contacts = Contact::orderBy('company_id')->orderBy('id')->paginate(10);
 
     return view('contacts.index',['contacts'=>$contacts, 'companies'=>$companies]);
     }
