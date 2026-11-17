@@ -23,7 +23,11 @@ class ContactController extends Controller
 
     // $contacts = Contact::orderBy('company_id')->orderBy('id')->paginate(10);
 
-        $contactsCollection = Contact::latest()->get();
+        $contactsCollection = Contact::latest()
+            ->when($request->filled('company_id'), function ($query) use ($request) {
+                return $query->where('company_id', $request->query('company_id'));
+            })
+            ->get();
 
         $per_page = 10;
         $current_page = request()->query('page',1);
@@ -37,7 +41,11 @@ class ContactController extends Controller
     }
 
     function create(){
-        return view('contacts.create');
+
+        // dd(request()->fullUrl());
+        $companies = $this->company->pluck();
+
+        return view('contacts.create', compact('companies'));
     }
 
     function show(Request $request, $id){
@@ -45,5 +53,19 @@ class ContactController extends Controller
     $contact = Contact::findOrFail($id);
     
     return view('contacts.show')->with('contact',$contact);
+    }
+
+    function store(Request $request){
+        $request->validate([
+            'first_name'=>'required|string|max:50',
+            'last_name'=>'required|string|max:50',
+            'email'=>'required|email',
+            'phone'=>'nullable',
+            'address'=>'nullable',
+            'company_id'=>'required|exists:companies,id'
+        ]);
+        Contact::create($request->all());
+
+        return redirect()->route('contacts.index')->with('message','Contact added successfully');
     }
 }
