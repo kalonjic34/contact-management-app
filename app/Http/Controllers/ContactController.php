@@ -23,24 +23,11 @@ class ContactController extends Controller
 
     // $contacts = Contact::orderBy('company_id')->orderBy('id')->paginate(10);
 
-        $contactsCollection = Contact::latest()
-            ->when($request->filled('company_id'), function ($query) use ($request) {
-                return $query->where('company_id', $request->query('company_id'));
-            })
-
-
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->query('search');
-
-                return $query->where(function ($query) use ($search) {
-                    $query->where('first_name', 'LIKE', "%{$search}%")
-                        ->orWhere('last_name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
-                });
-            })
-            ->when($request->boolean('trash'), function ($query) {
-                return $query->onlyTrashed();
-            })
+        $contactsCollection = Contact::query()
+            ->filterByCompany('company_id')
+            ->orderBy('first_name')
+            ->allowedSearch('first_name', 'last_name', 'email')
+            ->allowedTrash()
             ->get();
         $per_page = 10;
         $current_page = request()->query('page',1);
