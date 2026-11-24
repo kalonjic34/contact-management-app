@@ -25,7 +25,7 @@ class ContactController extends Controller
 
         $contactsCollection = Contact::query()
             ->filterByCompany('company_id')
-            ->orderBy('first_name')
+            ->allowedSorts(['first_name', 'last_name', 'email'], 'first_name')
             ->allowedSearch('first_name', 'last_name', 'email')
             ->allowedTrash()
             ->get();
