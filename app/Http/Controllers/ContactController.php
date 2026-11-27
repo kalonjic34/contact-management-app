@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\CompanyRepository;
 use App\Models\Contact;
+use App\Http\Requests\ContactRequest;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -12,12 +13,12 @@ class ContactController extends Controller
 
     // protected $company;
 
-    function __construct(protected CompanyRepository $company)
+    public function __construct(protected CompanyRepository $company)
     {
-        $this->company= $company;
+        $this->company = $company;
     }
 
-    function index(CompanyRepository $company, Request $request){
+    public function index(CompanyRepository $company, Request $request){
 
     $companies = $company->pluck();
 
@@ -40,7 +41,7 @@ class ContactController extends Controller
     return view('contacts.index',['contacts'=>$contacts, 'companies'=>$companies]);
     }
 
-    function create(){
+    public function create(){
 
         // dd(request()->fullUrl());
         $companies = $this->company->pluck();
@@ -49,13 +50,12 @@ class ContactController extends Controller
         return view('contacts.create', compact('companies', 'contact'));
     }
 
-    function show(Request $request, $id){
+    public function show(Contact $contact){
 
-    $contact = Contact::findOrFail($id);
     
     return view('contacts.show')->with('contact',$contact);
     }
-    function edit(Request $request, $id){
+    public function edit(Request $request, int $id){
 
     $companies = $this->company->pluck();
 
@@ -64,37 +64,22 @@ class ContactController extends Controller
     return view('contacts.edit',compact('companies', 'contact'));
     }
 
-    function update(Request $request, $id){
-            $contact = Contact::findOrFail($id);
 
-        $request->validate([
-            'first_name'=>'required|string|max:50',
-            'last_name'=>'required|string|max:50',
-            'email'=>'required|email',
-            'phone'=>'nullable',
-            'address'=>'nullable',
-            'company_id'=>'required|exists:companies,id'
-        ]);
+    public function update(ContactRequest $request, Contact $contact){
+
         $contact->update($request->all());
 
         return redirect()->route('contacts.index')->with('message','Contact updated successfully');
     }
 
-    function store(Request $request){
-        $request->validate([
-            'first_name'=>'required|string|max:50',
-            'last_name'=>'required|string|max:50',
-            'email'=>'required|email',
-            'phone'=>'nullable',
-            'address'=>'nullable',
-            'company_id'=>'required|exists:companies,id'
-        ]);
+    public function store(ContactRequest $request){
         Contact::create($request->all());
 
         return redirect()->route('contacts.index')->with('message','Contact added successfully');
     }
 
-    function destroy($id){
+
+    public function destroy(int $id){
 
     $contact = Contact::findOrFail($id);
     $contact->delete();
@@ -105,11 +90,11 @@ class ContactController extends Controller
     
     }
 
-    function get_undo_route($name, $resource){
+    public function get_undo_route($name, $resource){
         return request()->missing('undo')? route($name,[$resource->id,'undo'=>true]):null;
     }
 
-    function restore($id){
+    public function restore(int $id){
 
     $contact = Contact::onlyTrashed()->findOrFail($id);
     $contact->restore();
@@ -119,9 +104,8 @@ class ContactController extends Controller
     ->with('undoRoute',$this->get_undo_route('contacts.destroy',$contact));
     
     }
-    function forceDelete($id){
+    public function forceDelete(Contact $contact){
 
-    $contact = Contact::onlyTrashed()->findOrFail($id);
     $contact->forceDelete();
 
     return back()
